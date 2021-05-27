@@ -21,16 +21,14 @@
 역사상 가장 빠른 x86 맥이라는 찬사를 들었던 M1 입니다. 심지어 로제타2 를 통해서 x86 바이너리를 실행하는 성능도 기존의 맥북을 뛰어넘는다고 하죠.
 
 우선 비교군으로, 제 옆자리 분의 15인치 맥북으로 빌드를 해보겠습니다.
-
-4분 56초 = 296초가 걸리는군요.
+<p align="center"><img src="../assets/images/socar-api-apple-silicon/15inch.png" width="640px"><br>4분 56초 = 296초가 걸리는군요.</p
 
 M1 의 성능 1 : 일단 로제타2로 쏘카 API 서버를 빌드해보겠습니다.
-
-4분 13초 = 253초 걸렸습니다. 13인치 + 로제타로 15인치급의 성능을 내는 것을 볼 수 있습니다. 
+<p align="center"><img src="../assets/images/socar-api-apple-silicon/13inch-m1-rosetta.png" width="640px"><br>4분 13초 = 253초 걸렸습니다. 13인치 + 로제타로 15인치급의 성능을 내는 것을 볼 수 있습니다.</p>
+ 
 
 M1 의 성능 2 : M1 에 대응하는 JDK (aarch64) 로 쏘카 API 서버를 빌드해보겠습니다.
-
-1분 52초 = 112초 걸렸습니다.
+<p align="center"><img src="../assets/images/socar-api-apple-silicon/13inch-m1.png" width="640px"><br>1분 52초 = 112초 걸렸습니다.</p>
 
 대략 2.6배 정도의 성능차이입니다. 다시 말씀드립니다만 **15인치 인텔** 맥북 vs **13인치 M1** 맥북입니다.
 
@@ -103,7 +101,9 @@ M1 의 성능 2 : M1 에 대응하는 JDK (aarch64) 로 쏘카 API 서버를 빌
       ```
       public static final OsArchitecture MAC_OS_APPLE_SILICON = new OsArchitecture(OS.MAC_OS_X, Architecture.APPLE_SILICON);
       ```
-      그다음 `OSDetector.java` 를 열어봅시다. 여기군요.
+      그다음 `OSDetector.java` 를 열어봅시다.
+      
+      여기군요.
       ```
       private static Architecture getMacOSXArchitecture() {
          ...
