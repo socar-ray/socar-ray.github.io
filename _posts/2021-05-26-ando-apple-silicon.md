@@ -68,13 +68,18 @@ M1 의 성능 2 : M1 에 대응하는 JDK (aarch64) 로 쏘카 API 서버를 빌
    
 
    1. Wix MySQL 
-
-      해당되는 아키텍쳐 aarch64 를 지원하지 않아, 32bit legacy 를 시도하는 문제입니다. 우선 해당 라이브러리를 clone 받습니다. 
       
+      Wix MySQL 자체는 문제가 없습니다만, 해당 라이브러리가 사용하는 `de.flapdoodle.embed.process` 패키지가 문제가 됩니다.
+      구형 2.1.3 버전을 쓰고 있군요. 버전을 올리면 Wix MySQL 이 깨지는 형편이라 해당 2.1.3 버전을 수정해야할 것 같습니다.
+      
+      해당되는 아키텍쳐 aarch64 를 지원하지 않아, 32bit legacy 를 시도하는 문제입니다. 우선 해당 라이브러리를 clone 받습니다. 
       그리고 문제가 되는 부분의 코드를 찾아 보면.. `BitSize.java` 파일입니다. 
-
-      여기군요.
-
+      
+      
+      여기군요. (작성 시점으로 보니 뭔가 반영한 것 같습니다?? osArch.endsWith("64") 로 바뀌었군요!!)
+      
+      https://github.com/flapdoodle-oss/de.flapdoodle.embed.process/blob/6c8a0534ec73254d07caf9efbd691207d3547462/src/main/java/de/flapdoodle/embed/process/distribution/BitSize.java#L36
+      
       ```
       if (osArch.equals("i686_64") || osArch.equals("x86_64") || osArch.equals("amd64"))
       ```
@@ -89,6 +94,8 @@ M1 의 성능 2 : M1 에 대응하는 JDK (aarch64) 로 쏘카 API 서버를 빌
       
       이 쪽은 아키텍쳐와 바이너리 모두를 수정해줘야 합니다. 우선 `Architecture.java` 파일에 항목을 추가합니다.
 
+      https://github.com/spinnaker/embedded-redis/blob/783bbdaeb7a6ef5e5644e1e09ca3bea6f48ab62d/src/main/java/redis/embedded/util/Architecture.java#L3
+
       ```
       public enum Architecture {
          x86,
@@ -98,12 +105,18 @@ M1 의 성능 2 : M1 에 대응하는 JDK (aarch64) 로 쏘카 API 서버를 빌
       ```
 
       그리고 `OsArchitecture.java` 파일에 해당 항목을 등록합니다.
+      
+      https://github.com/spinnaker/embedded-redis/blob/783bbdaeb7a6ef5e5644e1e09ca3bea6f48ab62d/src/main/java/redis/embedded/util/OsArchitecture.java#L13
+      
       ```
       public static final OsArchitecture MAC_OS_APPLE_SILICON = new OsArchitecture(OS.MAC_OS_X, Architecture.APPLE_SILICON);
       ```
       그다음 `OSDetector.java` 를 열어봅시다.
       
       여기군요.
+      
+      https://github.com/spinnaker/embedded-redis/blob/783bbdaeb7a6ef5e5644e1e09ca3bea6f48ab62d/src/main/java/redis/embedded/util/OSDetector.java#L77
+      
       ```
       private static Architecture getMacOSXArchitecture() {
          ...
@@ -124,6 +137,8 @@ M1 의 성능 2 : M1 에 대응하는 JDK (aarch64) 로 쏘카 API 서버를 빌
       그리고 Redis Binary 를 추가합니다. 디폴트로 제공되는 4.x 버전은 M1 대응이 안되므로... 
       아쉽지만 6.2.1 버전을 추가합니다. 6.2.1 소스를 받아서 컴파일한 후에 resources 디렉토리 아래에 붙여넣습니다. 저는 postfix 로 -AS 를 사용했습니다. (Apple Silicon)
       이제 RedisExecProvider.java 에서 위의 실행파일을 사용하도록 합니다.
+      
+      https://github.com/spinnaker/embedded-redis/blob/783bbdaeb7a6ef5e5644e1e09ca3bea6f48ab62d/src/main/java/redis/embedded/RedisExecProvider.java#L26
       ```
        private void initExecutables() {
          ....
