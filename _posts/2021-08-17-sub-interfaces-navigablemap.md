@@ -138,7 +138,7 @@ NavigableMap m = new LinkedHashMap();
 
 매우 간단한 예제를 살펴 보겠습니다[^5].
 
-(1부터 100까지) 숫자 범위에 따라 다른 방을 배정하려고 합니다.
+(1부터 100까지) 숫자 범위에 따라 봄,여름,가을, 겨울 중 하나를 배정하려고 합니다.
 if - else 구문을 사용하면 이 정도 되겠지요?
 
 ```kotlin
@@ -156,8 +156,8 @@ return if (num > 75) { // num <= 100
 나쁘지 않습니다.
 아마도 여러분은 더 좋은 구현 방법을 알고 있으리라 생각합니다.
 
-`NavigableMap`으로 표현하면 어떨까요?
-지금까지 했던 이야기를 바탕으로 이미 구현 방법을 떠올린 분도 계실 수 있다고 생각합니다.
+if-else 말고 다른 방법으로 표현할 수 있을까요?
+`NavigableMap` 이야기를 하고 있으니 이 자료 구조로 표현하는 방법이 있겠지요?
 
 ```kotlin
 val m: NavigableMap<Int, String> = TreeMap()
@@ -170,17 +170,17 @@ return = m.ceilingEntry(num).getValue()
 ```
 
 대략 이 정도 코드인데 전반적인 느낌을 이해하기는 어렵지 않으리라 생각합니다[^6].
-ceiling 뜻 그대로, 전달한 인자보다 큰 쪽으로 가장 인접한 키값을 찾습니다.
+ceiling 뜻 그대로, 전달한 인자보다 큰 쪽으로 가장 인접한 키를 찾습니다.
 
 > Returns the least key greater than or equal to the given key, or null if there is no such key.
 
 만약 `num = 69` 였다면 69에 해당하는 키는 없지만 69보다 크면서 가장 가까운(작은) 키인 75를 선택합니다.
 즉, (75, "여름")이 해당하는 엔트리입니다.
 
-`floorEntry()`는 반대로 전달한 인자보다 작은 쪽으로 가장 인접한 값을 찾겠지요?
-물론 위/아래로 범위를 넘어서는 값을 주면 찾을 수 있는 값이 없습니다.
+`floorEntry()`는 반대로 전달한 인자보다 작은 쪽으로 가장 인접한 키를 찾겠지요?
+물론 위/아래로 범위를 넘어서는 값을 주면 찾을 수 있는 키가 없습니다.
 api 문서를 보면 이 경우 `null`을 반환한다고 명시했습니다.
-위의 예제에서는 `m.ceilingEntry(101)`이나 `m.floorEntry(0)`이 `null`입니다.
+앞선 예제에서는 `m.ceilingEntry(101)`이나 `m.floorEntry(0)`이 `null`입니다.
 이런 경우 상/하한 경계를 찾을 수 있는 장치로 `higherEntry()`, `lowerEntry()`가 있습니다.
 
 `NavigableMap`이 가능하려면 어떤 전제 조건이 필요합니다.
